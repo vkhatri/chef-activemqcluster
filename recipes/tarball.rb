@@ -37,9 +37,9 @@ tarball_dir   = File.join(temp_d, "apache-activemq-#{node.activemq.version}")
 
 # Stop activemq Service if running for Version Upgrade
 service "activemq" do
-  service_name node.activemq.service_name
-  action :stop
-  only_if { File.exists? "/etc/init.d/#{node.activemq.service_name}" and not File.exists?(node.activemq.source_dir) }
+  service_name  node.activemq.service_name
+  action        :stop
+  only_if       { File.exists? "/etc/init.d/#{node.activemq.service_name}" and not File.exists?(node.activemq.source_dir) }
 end
 
 # activemq Version Package File
@@ -98,34 +98,34 @@ end
 }
 
 template File.join(node.activemq.install_dir, 'conf', 'wrapper.conf') do
-  source "wrapper.conf.erb"
-  owner node.activemq.user
-  group node.activemq.group
-  mode  0644
-  notifies :restart, "service[activemq]", :delayed if node.activemq.notify_restart
+  source    "wrapper.conf.erb"
+  owner     node.activemq.user
+  group     node.activemq.group
+  mode      0644
+  notifies  :restart, "service[activemq]", :delayed if node.activemq.notify_restart
 end
 
 template File.join(node.activemq.install_dir, 'conf', 'activemq.xml') do
-  source "activemq.xml.erb"
-  owner node.activemq.user
-  group node.activemq.group
-  mode  0644
-  notifies :restart, "service[activemq]", :delayed if node.activemq.notify_restart
+  source    "activemq.xml.erb"
+  owner     node.activemq.user
+  group     node.activemq.group
+  mode      0644
+  notifies  :restart, "service[activemq]", :delayed if node.activemq.notify_restart
 end
 
 template File.join(node.activemq.install_dir, 'conf', 'log4j.properties') do
-  source "log4j.properties.erb"
-  owner node.activemq.user
-  group node.activemq.group
-  mode  0644
-  notifies :restart, "service[activemq]", :delayed if node.activemq.notify_restart
+  source    "log4j.properties.erb"
+  owner     node.activemq.user
+  group     node.activemq.group
+  mode      0644
+  notifies  :restart, "service[activemq]", :delayed if node.activemq.notify_restart
 end
 
 # activemq Service User limits
 user_ulimit node.activemq.user do
-  filehandle_limit node.activemq.limits.nofile
-  process_limit node.activemq.limits.nproc
-  memory_limit node.activemq.limits.memlock
+  filehandle_limit  node.activemq.limits.nofile
+  process_limit     node.activemq.limits.nproc
+  memory_limit      node.activemq.limits.memlock
 end
 
 ruby_block "require_pam_limits.so" do
@@ -137,14 +137,14 @@ ruby_block "require_pam_limits.so" do
 end
 
 template "/etc/init.d/activemq" do
-  source "#{node.platform_family}.activemq.init.erb"
-  owner 'root'
-  group 'root'
-  mode  0744
+  source  "activemq.init.erb"
+  owner   node.activemq.user
+  group   node.activemq.group
+  mode    0744
 end
 
 service "activemq" do
-  supports :start => true, :stop => true, :restart => true, :status => true
-  service_name node.activemq.service_name
-  action [:enable, :start]
+  supports      :start => true, :stop => true, :restart => true, :status => true
+  service_name  node.activemq.service_name
+  action        [:enable, :start]
 end
