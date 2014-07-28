@@ -148,3 +148,8 @@ service "activemq" do
   service_name  node.activemq.service_name
   action        [:enable, :start]
 end
+
+remote_file tarball_file do
+  action :delete
+end
+
